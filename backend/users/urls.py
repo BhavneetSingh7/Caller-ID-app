@@ -14,7 +14,7 @@ urlpatterns = [
 
     # Authenticated users can import contacts in Global DB and mark spam
     path('add/',AddPersonalContact.as_view(),name='add'),
-    path('spam/',MarkSpamView.as_view(),name='spam'),
+    path('spam/<int:pk>/',MarkSpamView.as_view(),name='spam'),
 
     # filter views and search queries
 ]

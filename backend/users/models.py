@@ -40,7 +40,8 @@ class SpamDB(models.Model):
     """
     Includes number of times a number is marked as spam
     """
-    spam_phone_number = models.ForeignKey(GlobalDB,related_name='Global2Spam', blank=False, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=13, blank=False, null=True)
+    country_code = models.CharField(max_length=4, blank=False, null=True)
     marked_by = models.ForeignKey(GlobalDB,related_name='Spam2Global', blank=False, on_delete=models.CASCADE)
     marked_at = models.DateTimeField(auto_now_add=True)
 

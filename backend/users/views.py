@@ -47,8 +47,9 @@ class MarkSpamView(generics.RetrieveUpdateAPIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        spam_phone_number = GlobalDB.objects.get(id=serializer.validated_data['spam_phone_number'])
+    def perform_update(self, serializer):
+        spam_phone_number = GlobalDB.objects.filter(phone_number=serializer.validated_data['phone_number'], country_code=serializer.validated_data['country_code'])
+        spam_phone_number = spam_phone_number[0]
         marked_by = GlobalDB.objects.get(id=self.request.user.id)
         pc = SpamDB(spam_phone_number,marked_by)
         pc.save()

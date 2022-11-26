@@ -33,7 +33,7 @@ class SpamDBSerailizer(serializers.ModelSerializer):
     class Meta:
         model = SpamDB
         fields = [
-            'id', 'spam_phone_number', 'marked_by', 'marked_at'
+            'id', 'phone_number', 'country_code', 'marked_at'
         ]
 
 def phone_number_format(num):
