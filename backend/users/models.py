@@ -35,7 +35,7 @@ class PersonalContact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.personal_contact+ ': ' +self.personal_contact_of
+        return str(self.personal_contact) + ' : ' + str(self.contact_of)
 
 
 class SpamDB(models.Model):

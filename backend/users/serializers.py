@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from users.models import GlobalDB, SpamDB, PersonalContact
 
 
@@ -17,21 +18,45 @@ class GlobalDBSerailizer(serializers.ModelSerializer):
 
 class PersonalContactSerailizer(serializers.ModelSerializer):
     """
-    Serializer for Global DB API
+    Serializer for Personal Contact DB API
     """
     class Meta:
         model = PersonalContact
         fields = [
-            'id', 'personal_contact', 'personal_contact_of', 'created_at'
+            'id', 'personal_contact', 'contact_of', 'created_at'
         ]
 
 
 class SpamDBSerailizer(serializers.ModelSerializer):
     """
-    Serializer for Global DB API
+    Serializer for Spam DB API
     """
     class Meta:
         model = SpamDB
         fields = [
-            'id', 'phone_number', 'spam_marks', 'marked_by'
+            'id', 'spam_phone_number', 'marked_by', 'marked_at'
         ]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating and updating user
+    """
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'id','name','phone_number', 'email', 'created_at'
+        ]
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'min_length': 5
+                }
+        }
+
+    def create(self, validated_data):
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     #Some countries have 13 digits phone number plus max 4 digits for Country code
     # Dash or space separating numbers e.g. +123-4679733483
     phone_number = models.CharField(max_length=18, unique=True, blank=False)
-    email = models.EmailField(max_length=255)
+    email = models.EmailField(max_length=255, blank=True)
     name = models.CharField(max_length=30, blank=False, unique=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
