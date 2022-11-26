@@ -7,9 +7,6 @@ from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
 
-def normalize_phone_number():
-    pass
-
 
 class UserManager(BaseUserManager):
     """
