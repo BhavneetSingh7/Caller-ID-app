@@ -1,5 +1,6 @@
 from django.urls import path
 from users import views
+from rest_framework.urls import urlpatterns
 from users.views import (
     UserCreateView, ManageUserView
 )
@@ -8,12 +9,12 @@ app_name = 'users'
 urlpatterns = [
     # User profile CRUD registration, login and logout views
     path('create/',UserCreateView.as_view(),name='create'),
-    path('<int:pk>/',ManageUserView.as_view(),name='profile'),
-    # path('login/',ManageUserView.as_view(),name='login'),
-    # path('logout/',ManageUserView.as_view(),name='logout'),
+    path('',ManageUserView.as_view(),name='profile'),
 
-    # Authenticated users import contacts and filter queries
-    # path('/',ManageUserView.as_view(),name='logout'),
-    # path('/',ManageUserView.as_view(),name='logout'),
-    # path('/',ManageUserView.as_view(),name='logout'),
+    # Authenticated users can import contacts in Global DB and mark spam
+    # path('add/',AddGlobal.as_view(),name='add'),
+    # path('add/',UpdateGlobal.as_view(),name='add'),
+    # path('spam/',MarkSpamView.as_view(),name='spam'),
+
+    # filter views and search queries
 ]

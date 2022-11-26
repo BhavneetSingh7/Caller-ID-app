@@ -1,8 +1,5 @@
 from django.db import models
 
-def normalize_phone_number():
-    pass
-
 class GlobalDB(models.Model):
     """
     Global Database includes all registered and personal contacts
