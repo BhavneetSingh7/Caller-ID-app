@@ -25,9 +25,10 @@ class GlobalDB(models.Model):
 
 class PersonalContact(models.Model):
     """
-    Includes relation of a number as a personal contact of other number
+    Includes relation of a registered number and its personal contact
     """
-    personal_contact = models.ForeignKey(GlobalDB,related_name='Global2Personal', blank=False, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=13, blank=False, null=True)
+    country_code = models.CharField(max_length=4, blank=False, null=True)
     contact_of = models.ForeignKey(GlobalDB,related_name='Personal2Global', blank=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -44,4 +45,4 @@ class SpamDB(models.Model):
     marked_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.spam_phone_number+ ': ' +self.marked_by
+        return str(self.spam_phone_number)+ ': ' +str(self.marked_by)

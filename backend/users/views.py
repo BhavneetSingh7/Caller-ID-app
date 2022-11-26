@@ -1,12 +1,8 @@
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import generics, authentication, permissions
-from rest_framework.decorators import api_view, APIView
+from users.models import GlobalDB, PersonalContact, SpamDB
 from users.serializers import (
-    GlobalDBSerailizer, PersonalContactSerailizer,
-    SpamDBSerailizer, UserSerializer
+    GlobalDBSerailizer,SpamDBSerailizer, UserSerializer
 )
-# from core.serializers import UserSerializer
 
 class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -21,22 +17,41 @@ class ManageUserView(generics.RetrieveUpdateDestroyAPIView):
         """Retrieve and return the authenticated user"""
         return self.request.user
 
-class LoginView(APIView):
-    queryset = get_user_model().objects.all()
-    permission_classes = (permissions.AllowAny,)
+class AddPersonalContact(generics.CreateAPIView):
+    """
+    First the personal contact is added in global DB
+    then relation is created with registered user
+    """
+    queryset = GlobalDB.objects.all()
+    serializer_class = GlobalDBSerailizer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, format=None):
-        pn = self.queryset.get(phone_number=request.POST['phone_number'])
-        data = {
-            'phone_number': request.POST.get('phone_number'),
-            'name': pn.name,
-            'password': request.POST.get('password'),
-        }
-        user = authentication.authenticate(request, phone_number=data['phone_number'])
-        if user is not None:
-            login(request, user)
-            return redirect('users:profile')
-        return redirect('users:login')
+    def perform_create(self, serializer):
+        pn = serializer.validated_data['phone_number']
+        cc = serializer.validated_data['country_code']
+        name = serializer.validated_data['name']
+        serializer.save(phone_number=pn, country_code=cc, name=name, is_personal_contact=True)
 
-def Logout(request):
-    return logout(request)
+        contact_of = GlobalDB.objects.get(id=self.request.user.id)
+        pc = PersonalContact(phone_number=pn, country_code=cc, contact_of=contact_of)
+        pc.save()
+
+class MarkSpamView(generics.RetrieveUpdateAPIView):
+    """
+    Get mark spam in global DB if the number is marked as spam more than or
+    equal to 10 times and then save meta data of it in Spam DB
+    """
+    queryset = SpamDB.objects.all()
+    serializer_class = SpamDBSerailizer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        spam_phone_number = GlobalDB.objects.get(id=serializer.validated_data['spam_phone_number'])
+        marked_by = GlobalDB.objects.get(id=self.request.user.id)
+        pc = SpamDB(spam_phone_number,marked_by)
+        pc.save()
+        n = SpamDB.objects.filter(spam_phone_number=spam_phone_number).count()
+        if n >= 10:
+            spam_phone_number.is_marked_as_spam = True

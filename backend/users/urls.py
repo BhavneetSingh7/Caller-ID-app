@@ -2,7 +2,8 @@ from django.urls import path
 from users import views
 from rest_framework.urls import urlpatterns
 from users.views import (
-    UserCreateView, ManageUserView
+    UserCreateView, ManageUserView,
+    AddPersonalContact, MarkSpamView
 )
 
 app_name = 'users'
@@ -12,9 +13,8 @@ urlpatterns = [
     path('',ManageUserView.as_view(),name='profile'),
 
     # Authenticated users can import contacts in Global DB and mark spam
-    # path('add/',AddGlobal.as_view(),name='add'),
-    # path('add/',UpdateGlobal.as_view(),name='add'),
-    # path('spam/',MarkSpamView.as_view(),name='spam'),
+    path('add/',AddPersonalContact.as_view(),name='add'),
+    path('spam/',MarkSpamView.as_view(),name='spam'),
 
     # filter views and search queries
 ]
